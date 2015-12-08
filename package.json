@@ -1,0 +1,33 @@
+{
+  "name": "koa-http-stats",
+  "description": "http request stats middleware for koa",
+  "repository": "https://github.com/vicanso/koa-http-stats",
+  "version": "2.0.0",
+  "author": {
+    "name": "vicanso 小墨鱼",
+    "email": "vicansocanbico@gmail.com"
+  },
+  "keywords": [
+    "koa",
+    "middleware",
+    "stats",
+    "http"
+  ],
+  "devDependencies": {
+    "istanbul": "^0.4.1",
+    "jshint": "^2.8.0",
+    "koa": "^2.0.0-alpha.3",
+    "mocha": "^2.3.4",
+    "supertest": "^1.1.0"
+  },
+  "license": "MIT",
+  "readme": "http request stats middleware for koa",
+  "dependencies": {
+    "debug": "^2.2.0"
+  },
+  "scripts": {
+    "test": "node ./node_modules/.bin/jshint ./index.js && node ./node_modules/.bin/_mocha --reporter spec",
+    "test-cov": "node ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --",
+    "test-travis": "node ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly --"
+  }
+}
