@@ -23,7 +23,9 @@ describe('http-stats', function() {
 
 	it('should set X-Time response header successful', function(done) {
 		const app = new Koa();
-		app.use(stats());
+		app.use(stats(function(performance) {
+			assert.equal(performance.total, 1);
+		}));
 		app.use(ctx => {
 			if (ctx.url === '/wait') {
 				return new Promise(function(resolve, reject) {

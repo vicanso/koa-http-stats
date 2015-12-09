@@ -47,7 +47,11 @@ function stats(options, onStats) {
 
 		function done() {
 			const use = Date.now() - start;
-			performance.connecting--;
+			/* istanbul ignore next */
+			if (performance.connecting > 0) {
+				performance.connecting--;
+			}
+
 
 			sdc.timing('http.use', use);
 			sdc.decrement('http.processing');
