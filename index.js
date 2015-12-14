@@ -20,7 +20,6 @@ function stats(options, onStats) {
 		timing: noop
 	};
 	const performance = {
-		createdAt: (new Date()).toISOString(),
 		total: 0,
 		connecting: 0,
 		status: {},
