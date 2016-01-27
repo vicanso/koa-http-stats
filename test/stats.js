@@ -137,4 +137,31 @@ describe('http-stats', function() {
 		}, 100);
 
 	});
+
+
+	it('should send stats successful when throw an error', function(done) {
+		const app = new Koa();
+		const incrementKeyList = 'http.processing http.processTotal http.status.50x http.timeLevel.puma http.sizeLevel.2KB'.split(' ');
+		const sdc = {
+			increment: function(key) {
+				assert.equal(key, incrementKeyList.shift());
+			},
+			decrement: function(key) {
+				assert.equal(key, 'http.processing');
+			},
+			timing: function(key) {
+				assert.equal(key, 'http.use');
+			}
+		};
+		app.use(stats({
+			sdc: sdc
+		}));
+		app.use(ctx => {
+			i.j = 0;
+		});
+
+		request(app.listen())
+			.get('/wait')
+			.expect(500, done);
+	});
 });

@@ -4,7 +4,12 @@ const noop = function() {};
 
 module.exports = stats;
 
-
+/**
+ * [stats description]
+ * @param  {[type]} options {sdc: 'statsd-client', time: 'time stats config', size: 'size stats config', status: 'status stats config'}
+ * @param  {[type]} onStats [description]
+ * @return {[type]}         [description]
+ */
 function stats(options, onStats) {
 	if (util.isFunction(options)) {
 		onStats = options;
@@ -28,12 +33,6 @@ function stats(options, onStats) {
 	};
 	return (ctx, next) => {
 		const start = Date.now();
-		const res = ctx.res;
-		const onfinish = done.bind(null, 'finish');
-		const onclose = done.bind(null, 'close');
-		res.once('finish', onfinish);
-		res.once('close', onclose);
-
 		sdc.increment('http.processing');
 		sdc.increment('http.processTotal');
 		performance.connecting++;
@@ -41,22 +40,26 @@ function stats(options, onStats) {
 		onStats(performance);
 		return next().then(function() {
 			ctx.set('X-Time', `start:${start},use:${Date.now() - start}`);
-		});
+			done();
+		}, done);
 
 
-		function done() {
+		function done(err) {
 			const use = Date.now() - start;
 			/* istanbul ignore next */
 			if (performance.connecting > 0) {
 				performance.connecting--;
 			}
 
-
 			sdc.timing('http.use', use);
 			sdc.decrement('http.processing');
 			/* istanbul ignore else */
 			if (options.status) {
-				let statusDesc = getDesc(options.status, ctx.status);
+				let status = ctx.status;
+				if (err) {
+					status = err.status || 500;
+				}
+				let statusDesc = getDesc(options.status, status);
 				sdc.increment('http.status.' + statusDesc);
 				performance.status[statusDesc] = (performance.status[statusDesc] || 0) + 1;
 			}
@@ -73,10 +76,9 @@ function stats(options, onStats) {
 				sdc.increment('http.sizeLevel.' + sizeDesc);
 				performance.size[sizeDesc] = (performance.size[sizeDesc] || 0) + 1;
 			}
-
-			res.removeListener('finish', onfinish);
-			res.removeListener('close', onclose);
-
+			if (err) {
+				throw err;
+			}
 		}
 	};
 }

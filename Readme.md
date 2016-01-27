@@ -46,7 +46,7 @@ app.use(ctx => {
 
 - `size` size stats config, default: `{"v":[2048,10240,51200,102400,307200],"desc":["2KB","10KB","50KB","100KB","300KB",">300KB"]}`
 
-- `status` size stats config, default: `{"v":[199,299,399,499,599],"desc":["10x","20x","30x","40x","50x","xxx"]}`
+- `status` status stats config, default: `{"v":[199,299,399,499,599],"desc":["10x","20x","30x","40x","50x","xxx"]}`
 
 - `sdc` statsD client
 
