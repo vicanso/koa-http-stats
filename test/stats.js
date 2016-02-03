@@ -21,40 +21,6 @@ describe('http-stats', function() {
 		}
 	});
 
-	it('should set X-Time response header successful', function(done) {
-		const app = new Koa();
-		app.use(stats(function(performance) {
-			assert.equal(performance.total, 1);
-		}));
-		app.use(ctx => {
-			if (ctx.url === '/wait') {
-				return new Promise(function(resolve, reject) {
-					ctx.body = 'Wait for 1000ms';
-					setTimeout(resolve, 1000);
-				});
-			} else {
-				ctx.body = 'Hello World';
-			}
-		});
-
-		request(app.listen())
-			.get('/wait')
-			.expect(200, 'Wait for 1000ms')
-			.end(function(err, res) {
-				if (err) {
-					done(err);
-				} else {
-					const xTime = res.get('X-Time');
-					const arr = res.get('X-Time').split(',');
-					const startAt = parseInt(arr[0].split(':')[1]);
-					const use = parseInt(arr[1].split(':')[1]);
-					assert(startAt < Date.now());
-					assert(use > 1000);
-					done();
-				}
-			});
-	});
-
 
 	it('should send stats successful', function(done) {
 		const app = new Koa();

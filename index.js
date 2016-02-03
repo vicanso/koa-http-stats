@@ -38,10 +38,7 @@ function stats(options, onStats) {
 		performance.connecting++;
 		performance.total++;
 		onStats(performance);
-		return next().then(function() {
-			ctx.set('X-Time', `start:${start},use:${Date.now() - start}`);
-			done();
-		}, done);
+		return next().then(done, done);
 
 
 		function done(err) {
