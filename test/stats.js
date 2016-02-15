@@ -60,8 +60,8 @@ describe('http-stats', function() {
 		this.timeout = 5000;
 		const app = new Koa();
 		const onStats = (performance) => {
-			if (performance.total === 2) {
-				assert.equal(performance.connecting, 1);
+			if (performance.total === 1) {
+				assert.equal(performance.connecting, 0);
 				assert.equal(performance.status['20x'], 1);
 				assert.equal(performance.time.puma, 1);
 				assert.equal(performance.size['2KB'], 1);
@@ -107,21 +107,14 @@ describe('http-stats', function() {
 
 	it('should send stats successful when throw an error', function(done) {
 		const app = new Koa();
-		const incrementKeyList = 'http.processing http.processTotal http.status.50x http.timeLevel.puma http.sizeLevel.2KB'.split(' ');
-		const sdc = {
-			increment: function(key) {
-				assert.equal(key, incrementKeyList.shift());
-			},
-			decrement: function(key) {
-				assert.equal(key, 'http.processing');
-			},
-			timing: function(key) {
-				assert.equal(key, 'http.use');
-			}
+		const onStats = (performance, stats) => {
+			assert.equal(stats.statusDesc, '50x');
+			assert.equal(stats.status, 500);
+			assert.equal(stats.timeLevel, 'puma');
+			assert.equal(stats.sizeLevel, '2KB');
+			assert(stats.use);
 		};
-		app.use(stats({
-			sdc: sdc
-		}));
+		app.use(stats({}, onStats));
 		app.use(ctx => {
 			i.j = 0;
 		});

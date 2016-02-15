@@ -1,10 +1,17 @@
 {
 	"name": "koa-http-stats",
 	"description": "http request stats middleware for koa",
-	"repository": "https://github.com/vicanso/koa-http-stats",
-	"version": "2.0.4",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/vicanso/koa-http-stats"
+	},
+	"version": "2.1.0",
 	"author": {
 		"name": "vicanso 小墨鱼",
+		"email": "vicansocanbico@gmail.com"
+	},
+	"bugs": {
+		"url": "https://github.com/vicanso/koa-http-stats/issues",
 		"email": "vicansocanbico@gmail.com"
 	},
 	"keywords": [

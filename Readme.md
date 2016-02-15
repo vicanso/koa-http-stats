@@ -22,9 +22,12 @@ const app = new Koa();
 
 // app.use(httpStats(options, onStats));
 
-app.use(httpStats(function(performance){
+app.use(httpStats(function(performance, stats){
 	// {"total":2,"connecting":1,"status":{"20x":1},"time":{"puma":1},"size":{"2KB":1}}
 	console.info(JSON.stringify(performance));
+
+	// { connecting: 0,total: 1,use: 2,statusDesc: '50x',status: 500,timeLevel: 'puma',sizeLevel: '2KB' }
+	console.info(JSON.stringify(stats));
 }));
 
 app.use(ctx => {
@@ -48,12 +51,10 @@ app.use(ctx => {
 
 - `status` status stats config, default: `{"v":[199,299,399,499,599],"desc":["10x","20x","30x","40x","50x","xxx"]}`
 
-- `sdc` statsD client
-
 
 #### onStats
 
-When a new request comming, the function will be trigger. 
+When a request is done, the function will be trigger. 
 
 
 ## License

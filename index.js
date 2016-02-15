@@ -6,7 +6,7 @@ module.exports = stats;
 
 /**
  * [stats description]
- * @param  {[type]} options {sdc: 'statsd-client', time: 'time stats config', size: 'size stats config', status: 'status stats config'}
+ * @param  {[type]} options {time: 'time stats config', size: 'size stats config', status: 'status stats config'}
  * @param  {[type]} onStats [description]
  * @return {[type]}         [description]
  */
@@ -19,11 +19,6 @@ function stats(options, onStats) {
 	extendOptions(options);
 	validate(options);
 	onStats = onStats || noop;
-	const sdc = options.sdc || {
-		increment: noop,
-		decrement: noop,
-		timing: noop
-	};
 	const performance = {
 		total: 0,
 		connecting: 0,
@@ -33,11 +28,8 @@ function stats(options, onStats) {
 	};
 	return (ctx, next) => {
 		const start = Date.now();
-		sdc.increment('http.processing');
-		sdc.increment('http.processTotal');
 		performance.connecting++;
 		performance.total++;
-		onStats(performance);
 		return next().then(done, done);
 
 
@@ -48,8 +40,11 @@ function stats(options, onStats) {
 				performance.connecting--;
 			}
 
-			sdc.timing('http.use', use);
-			sdc.decrement('http.processing');
+			const statsResult = {
+				connecting: performance.connecting,
+				total: performance.total,
+				use: use
+			};
 			/* istanbul ignore else */
 			if (options.status) {
 				let status = ctx.status;
@@ -57,22 +52,24 @@ function stats(options, onStats) {
 					status = err.status || 500;
 				}
 				let statusDesc = getDesc(options.status, status);
-				sdc.increment('http.status.' + statusDesc);
+				statsResult.statusDesc = statusDesc;
+				statsResult.status = status;
 				performance.status[statusDesc] = (performance.status[statusDesc] || 0) + 1;
 			}
 			/* istanbul ignore else */
 			if (options.time) {
 				let timeDesc = getDesc(options.time, use);
-				sdc.increment('http.timeLevel.' + timeDesc);
+				statsResult.timeLevel = timeDesc;
 				performance.time[timeDesc] = (performance.time[timeDesc] || 0) + 1;
 			}
 			/* istanbul ignore else */
 			if (options.size) {
 				let length = ctx.length || 0;
 				let sizeDesc = getDesc(options.size, length);
-				sdc.increment('http.sizeLevel.' + sizeDesc);
+				statsResult.sizeLevel = sizeDesc;
 				performance.size[sizeDesc] = (performance.size[sizeDesc] || 0) + 1;
 			}
+			onStats(performance, statsResult);
 			if (err) {
 				throw err;
 			}
