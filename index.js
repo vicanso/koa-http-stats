@@ -139,7 +139,7 @@ function getDesc(data, value) {
 		}
 	});
 	if (!data.v) {
-		return index;
+		return index + 1;
 	}
 	return data.desc[index + 1] || 'unknown';
 }
