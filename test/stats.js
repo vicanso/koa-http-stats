@@ -21,6 +21,30 @@ describe('http-stats', function() {
 		}
 	});
 
+	it('set stats array success', done => {
+		const app = new Koa();
+		app.use(stats({
+			time: [300, 500, 1001, 3000]
+		}, (performance, statsResult) => {
+			assert.equal(statsResult.timeLevel, 2);
+		}));
+
+		app.use(ctx => {
+			if (ctx.url === '/wait') {
+				return new Promise(function(resolve, reject) {
+					ctx.body = 'Wait for 1000ms';
+					setTimeout(resolve, 1000);
+				});
+			} else {
+				ctx.body = 'Hello World';
+			}
+		});
+
+		request(app.listen())
+			.get('/wait')
+			.expect(200, 'Wait for 1000ms', done);
+	});
+
 
 	it('should send stats successful', function(done) {
 		const app = new Koa();

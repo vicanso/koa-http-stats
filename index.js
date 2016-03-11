@@ -11,6 +11,7 @@ module.exports = stats;
  * @return {[type]}         [description]
  */
 function stats(options, onStats) {
+	/* istanbul ignore if */
 	if (util.isFunction(options)) {
 		onStats = options;
 		options = null;
@@ -86,7 +87,7 @@ function validate(options) {
 	const validKeys = ['time', 'size', 'status'];
 	validKeys.forEach(function(key) {
 		const opts = options[key];
-		if (opts && opts.v.length !== opts.desc.length - 1) {
+		if (opts && opts.v && opts.desc && opts.v.length !== opts.desc.length - 1) {
 			throw new Error(`${key} stats value size is not equal desc size - 1`);
 		}
 	});
@@ -105,7 +106,7 @@ function extendOptions(options) {
 		},
 		size: {
 			v: [1024 * 2, 10 * 1024, 50 * 1024, 100 * 1024, 300 * 1024],
-			desc: ['2KB', '10KB', '50KB', '100KB', '300KB', '>300KB'],
+			desc: ['2KB', '10KB', '50KB', '100KB', '300KB', '>300KB']
 		},
 		status: {
 			v: [199, 299, 399, 499, 599],
@@ -131,10 +132,14 @@ function getDesc(data, value) {
 		return 'unknown';
 	}
 	let index = -1;
-	data.v.forEach(function(v, i) {
+	const list = data.v ? data.v : data;
+	list.forEach(function(v, i) {
 		if (value > v) {
 			index = i;
 		}
 	});
+	if (!data.v) {
+		return index;
+	}
 	return data.desc[index + 1] || 'unknown';
 }
