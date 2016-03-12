@@ -50,6 +50,7 @@ app.use(ctx => {
 
 - `status` status stats config, default: `[99, 199, 299, 399, 499]`
 
+- `busy` connecting stats config, default: `busy: [50, 200, 500, 1000]`
 
 #### onStats
 
