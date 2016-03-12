@@ -1,68 +1,30 @@
 'use strict';
 const Koa = require('koa');
-const stats = require('..');
+const httpStats = require('..');
 const request = require('supertest');
 const assert = require('assert');
 
-describe('http-stats', function() {
+describe('http-stats', done => {
 
-
-	it('should throw error when options stats value size is not equal desc size - 1', function(done) {
-		try {
-			stats({
-				time: {
-					v: [300, 500, 1000, 3000],
-					desc: ['puma', 'tiger', 'deer', 'rabbit']
-				}
-			});
-		} catch (err) {
-			assert.equal(err.message, 'time stats value size is not equal desc size - 1');
-			done();
-		}
-	});
-
-	it('set stats array success', done => {
+	it('should set onStats success', done => {
 		const app = new Koa();
-		app.use(stats({
-			time: [300, 500, 1001, 3000]
-		}, (performance, statsResult) => {
-			assert.equal(statsResult.timeLevel, 2);
-		}));
+		const onStats = (performance, statsResult) => {
+			assert.equal(performance.total, 1);
+			assert.equal(performance.connecting, 0);
+			assert.equal(performance.status.length, 6);
+			assert.equal(performance.time.length, 6);
+			assert.equal(performance.size.length, 6);
+			assert.equal(performance.status[2], 1);
+			assert.equal(performance.time[0], 1);
+			assert.equal(performance.size[0], 1);
 
-		app.use(ctx => {
-			if (ctx.url === '/wait') {
-				return new Promise(function(resolve, reject) {
-					ctx.body = 'Wait for 1000ms';
-					setTimeout(resolve, 1000);
-				});
-			} else {
-				ctx.body = 'Hello World';
-			}
-		});
-
-		request(app.listen())
-			.get('/wait')
-			.expect(200, 'Wait for 1000ms', done);
-	});
-
-
-	it('should send stats successful', function(done) {
-		const app = new Koa();
-		const incrementKeyList = 'http.processing http.processTotal http.status.20x http.timeLevel.rabbit http.sizeLevel.2KB'.split(' ');
-		const sdc = {
-			increment: function(key) {
-				assert.equal(key, incrementKeyList.shift());
-			},
-			decrement: function(key) {
-				assert.equal(key, 'http.processing');
-			},
-			timing: function(key) {
-				assert.equal(key, 'http.use');
-			}
+			assert(statsResult.use > 0);
+			assert.equal(statsResult.bytes, 11);
+			assert.equal(statsResult.status, 2);
+			assert.equal(statsResult.spdy, 0);
+			assert.equal(statsResult.size, 0);
 		};
-		app.use(stats({
-			sdc: sdc
-		}));
+		app.use(httpStats(onStats));
 		app.use(ctx => {
 			if (ctx.url === '/wait') {
 				return new Promise(function(resolve, reject) {
@@ -73,78 +35,89 @@ describe('http-stats', function() {
 				ctx.body = 'Hello World';
 			}
 		});
-
-		request(app.listen())
-			.get('/wait')
-			.expect(200, 'Wait for 1000ms', done);
-	});
-
-
-	it('should set onStats successful', function(done) {
-		this.timeout = 5000;
-		const app = new Koa();
-		const onStats = (performance) => {
-			if (performance.total === 1) {
-				assert.equal(performance.connecting, 0);
-				assert.equal(performance.status['20x'], 1);
-				assert.equal(performance.time.puma, 1);
-				assert.equal(performance.size['2KB'], 1);
-				done();
-			};
-		};
-		app.use(stats({}, onStats));
-		app.use(ctx => {
-			if (ctx.url === '/wait') {
-				return new Promise(function(resolve, reject) {
-					ctx.body = 'Wait for 1000ms';
-					setTimeout(resolve, 1000);
-				});
-			} else {
-				ctx.body = 'Hello World';
-			}
-		});
-
 
 		const server = app.listen();
 		request(server)
 			.get('/')
 			.expect(200, 'Hello World')
 			.end(function(err, res) {
-				if (err) {
-					done(err);
-				}
+				done(err);
 			});
-
-		setTimeout(function() {
-			request(server)
-				.get('/wait')
-				.expect(200, 'Wait for 1000ms')
-				.end(function(err, res) {
-					if (err) {
-						done(err);
-					}
-				});
-		}, 100);
 
 	});
 
-
-	it('should send stats successful when throw an error', function(done) {
+	it('should get stats success when an error throw', done => {
 		const app = new Koa();
-		const onStats = (performance, stats) => {
-			assert.equal(stats.statusDesc, '50x');
-			assert.equal(stats.status, 500);
-			assert.equal(stats.timeLevel, 'puma');
-			assert.equal(stats.sizeLevel, '2KB');
-			assert(stats.use);
+		const onStats = (performance, statsResult) => {
+
+			assert.equal(statsResult.code, 500);
+			assert.equal(statsResult.status, 5);
+			assert(statsResult.use > 1000);
+			assert.equal(statsResult.spdy, 4);
 		};
-		app.use(stats({}, onStats));
+		app.use(httpStats(onStats));
 		app.use(ctx => {
-			i.j = 0;
+			return new Promise((resolve, reject) => {
+				setTimeout(() => {
+					reject(new Error('ERROR'));
+				}, 1000);
+			});
 		});
 
 		request(app.listen())
-			.get('/wait')
+			.get('/')
 			.expect(500, done);
+	});
+
+	it('should set options success', done => {
+		const app = new Koa();
+		const onStats = (performance, statsResult) => {
+			assert.equal(statsResult.status, 3);
+		};
+		app.use(httpStats({
+			status: [1, 2, 3]
+		}, onStats));
+		app.use(ctx => {
+			ctx.body = 'Hello World';
+		});
+
+		request(app.listen())
+			.get('/')
+			.expect(200, done);
+	});
+
+
+	it('should get connecting count success', done => {
+		let hasChecked = false;
+		const app = new Koa();
+		const onStats = (performance, statsResult) => {
+			if (!hasChecked) {
+				assert.equal(performance.connecting, 1);
+				hasChecked = true;
+			}
+		};
+		app.use(httpStats(onStats));
+		app.use(ctx => {
+			if (ctx.url === '/wait') {
+				return new Promise(function(resolve, reject) {
+					ctx.body = 'Wait for 1000ms';
+					setTimeout(resolve, 1000);
+				});
+			} else {
+				ctx.body = 'Hello World';
+			}
+		});
+
+		const server = app.listen();
+
+		request(server)
+			.get('/wait')
+			.expect(200, 'Wait for 1000ms')
+			.end(done);
+		request(server)
+			.get('/')
+			.expect(200, 'Hello World')
+			.end((err) => {
+			});
 	});
 });

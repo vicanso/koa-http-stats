@@ -20,13 +20,11 @@ const httpStats = require('koa-http-stats');
 const Koa = require('koa');
 const app = new Koa();
 
-// app.use(httpStats(options, onStats));
 
-app.use(httpStats(function(performance, stats){
-	// {"total":2,"connecting":1,"status":{"20x":1},"time":{"puma":1},"size":{"2KB":1}}
+app.use(httpStats(function(performance, stats) {
+	// {"total":1,"connecting":0,"status":[0,0,1,0,0,0],"time":[1,0,0,0,0,0],"size":[1,0,0,0,0,0]}
 	console.info(JSON.stringify(performance));
-
-	// { connecting: 0,total: 1,use: 2,statusDesc: '50x',status: 500,timeLevel: 'puma',sizeLevel: '2KB' }
+	// {"connecting":0,"total":1,"use":4,"bytes":11,"code":200,"status":2,"spdy":0,"size":0}
 	console.info(JSON.stringify(stats));
 }));
 
@@ -45,11 +43,11 @@ app.use(ctx => {
 
 #### options
 
-- `time` time stats config, default: `{"v":[300,500,1000,3000],"desc":["puma","tiger","deer","rabbit","turtle"]}`
+- `time` time stats config, default: `[30, 100, 500, 1000, 3000]`
 
-- `size` size stats config, default: `{"v":[2048,10240,51200,102400,307200],"desc":["2KB","10KB","50KB","100KB","300KB",">300KB"]}`
+- `size` size stats config, default: `[1024 * 2, 10 * 1024, 50 * 1024, 100 * 1024, 300 * 1024]`
 
-- `status` status stats config, default: `{"v":[199,299,399,499,599],"desc":["10x","20x","30x","40x","50x","xxx"]}`
+- `status` status stats config, default: `[99, 199, 299, 399, 499]`
 
 
 #### onStats
