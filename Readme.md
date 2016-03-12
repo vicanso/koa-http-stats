@@ -1,4 +1,5 @@
 # koa-http-stats
+[![Build Status](https://travis-ci.org/vicanso/koa-http-stats.svg?branch=master)](https://travis-ci.org/vicanso/koa-http-stats)
 	
 	HTTP Stats middleware for Koa. This is an useful simple stats, include: request total, request connecting total, request handle time and so on.
 
