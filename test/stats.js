@@ -17,12 +17,14 @@ describe('http-stats', done => {
 			assert.equal(performance.status[2], 1);
 			assert.equal(performance.time[0], 1);
 			assert.equal(performance.size[0], 1);
+			assert.equal(performance.busy[0], 1);
 
 			assert(statsResult.use > 0);
 			assert.equal(statsResult.bytes, 11);
 			assert.equal(statsResult.status, 2);
 			assert.equal(statsResult.spdy, 0);
 			assert.equal(statsResult.size, 0);
+			assert.equal(statsResult.busy, 0);
 		};
 		app.use(httpStats(onStats));
 		app.use(ctx => {

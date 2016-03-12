@@ -19,7 +19,8 @@ function stats(options, onStats) {
 		connecting: 0,
 		status: fill(options.status.length + 1, 0),
 		time: fill(options.time.length + 1, 0),
-		size: fill(options.size.length + 1, 0)
+		size: fill(options.size.length + 1, 0),
+		busy: fill(options.busy.length + 1, 0)
 	};
 
 	return (ctx, next) => {
@@ -30,7 +31,7 @@ function stats(options, onStats) {
 
 		function done(err) {
 			const use = Date.now() - start;
-			performance.connecting--;
+			const connecting = performance.connecting--;
 
 
 			let statusCode = ctx.status;
@@ -47,24 +48,22 @@ function stats(options, onStats) {
 				bytes: bytes,
 				code: statusCode
 			};
-			/* istanbul ignore else */
-			if (options.status) {
-				const index = sortedIndex(options.status, statusCode);
-				statsResult.status = index;
-				performance.status[index]++;
-			}
-			/* istanbul ignore else */
-			if (options.time) {
-				const index = sortedIndex(options.time, use);
-				statsResult.spdy = index;
-				performance.time[index]++;
-			}
-			/* istanbul ignore else */
-			if (options.size) {
-				const index = sortedIndex(options.size, bytes);
-				statsResult.size = index;
-				performance.size[index]++;
-			}
+			let index = sortedIndex(options.status, statusCode);
+			statsResult.status = index;
+			performance.status[index]++;
+
+			index = sortedIndex(options.time, use);
+			statsResult.spdy = index;
+			performance.time[index]++;
+
+			index = sortedIndex(options.size, bytes);
+			statsResult.size = index;
+			performance.size[index]++;
+
+			index = sortedIndex(options.busy, connecting);
+			statsResult.busy = index;
+			performance.busy[index]++;
+
 			onStats(performance, statsResult);
 			if (err) {
 				throw err;
@@ -86,7 +85,8 @@ function extendOptions(options) {
 	const defaultOptions = {
 		time: [30, 100, 500, 1000, 3000],
 		size: [1024 * 2, 10 * 1024, 50 * 1024, 100 * 1024, 300 * 1024],
-		status: [99, 199, 299, 399, 499]
+		status: [99, 199, 299, 399, 499],
+		busy: [50, 200, 500, 1000]
 	};
 	Object.keys(defaultOptions).forEach(function(key) {
 		/* istanbul ignore else */
