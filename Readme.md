@@ -1,5 +1,10 @@
 # koa-http-stats
-[![Build Status](https://travis-ci.org/vicanso/koa-http-stats.svg?branch=master)](https://travis-ci.org/vicanso/koa-http-stats)
+
+[![Build Status](https://travis-ci.org/vicanso/koa-http-stats.svg?style=flat-square)](https://travis-ci.org/vicanso/koa-http-stats)
+[![Coverage Status](https://img.shields.io/coveralls/vicanso/koa-http-stats/master.svg?style=flat)](https://coveralls.io/r/vicanso/koa-http-stats?branch=master)
+[![npm](http://img.shields.io/npm/v/koa-http-stats.svg?style=flat-square)](https://www.npmjs.org/package/koa-http-stats)
+[![Github Releases](https://img.shields.io/npm/dm/koa-http-stats.svg?style=flat-square)](https://github.com/vicanso/koa-http-stats)
+
 	
 	HTTP Stats middleware for Koa. This is an useful simple stats, include: request total, request connecting total, request handle time and so on.
 
