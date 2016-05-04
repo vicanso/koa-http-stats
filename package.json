@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/vicanso/koa-http-stats"
   },
-  "version": "2.1.5",
+  "version": "2.1.6",
   "author": "Tree Xie <vicansocanbico@gmail.com>",
   "bugs": {
     "url": "https://github.com/vicanso/koa-http-stats/issues",
@@ -30,7 +30,7 @@
     "node": ">=4.0.0"
   },
   "license": "MIT",
-  "readme": "http request stats middleware for koa",
+  "readmeFilename": "Readme.md",
   "dependencies": {
     "debug": "^2.2.0"
   },
