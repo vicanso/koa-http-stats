@@ -108,7 +108,7 @@ function stats() {
       statsResult.busy = index;
       performance.busy[index]++;
 
-      onStats(performance, statsResult);
+      onStats(performance, statsResult, ctx);
       if (err) {
         throw err;
       }
