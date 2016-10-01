@@ -1,4 +1,5 @@
 'use strict';
+
 const util = require('util');
 /* istanbul ignore next */
 function noop() {}
@@ -6,7 +7,7 @@ function noop() {}
 
 function fill(total, v) {
   const arr = [];
-  for (let i = 0; i < total; i++) {
+  for (let i = 0; i < total; i += 1) {
     arr.push(v);
   }
   return arr;
@@ -20,7 +21,7 @@ function extendOptions(options) {
     status: [99, 199, 299, 399, 499],
     busy: [50, 200, 500, 1000],
   };
-  Object.keys(defaultOptions).forEach(key => {
+  Object.keys(defaultOptions).forEach((key) => {
     /* istanbul ignore else */
     if (!opts[key]) {
       opts[key] = defaultOptions[key];
@@ -32,6 +33,7 @@ function sortedIndex(arr, value) {
   let low = 0;
   let high = arr.length;
   while (low < high) {
+    /* eslint no-bitwise:0 */
     const mid = (low + high) >>> 1;
     const computed = arr[mid];
     if (computed < value) {
@@ -45,7 +47,7 @@ function sortedIndex(arr, value) {
 
 function get(arr, filter, defaultValue) {
   let result;
-  arr.forEach(tmp => {
+  arr.forEach((tmp) => {
     if (tmp && filter(tmp)) {
       result = tmp;
     }
@@ -69,14 +71,14 @@ function stats() {
 
   return (ctx, next) => {
     const start = Date.now();
-    performance.total++;
-    performance.connecting++;
+    performance.total += 1;
+    performance.connecting += 1;
 
 
     function done(err) {
       const use = Date.now() - start;
-      const connecting = performance.connecting--;
-
+      performance.connecting -= 1;
+      const connecting = performance.connecting;
 
       let statusCode = ctx.status;
       /* istanbul ignore else */
@@ -86,7 +88,7 @@ function stats() {
 
       const bytes = ctx.length || 0;
       const statsResult = {
-        connecting: performance.connecting,
+        connecting,
         total: performance.total,
         use,
         bytes,
@@ -94,19 +96,19 @@ function stats() {
       };
       let index = sortedIndex(options.status, statusCode);
       statsResult.status = index;
-      performance.status[index]++;
+      performance.status[index] += 1;
 
       index = sortedIndex(options.time, use);
       statsResult.spdy = index;
-      performance.time[index]++;
+      performance.time[index] += 1;
 
       index = sortedIndex(options.size, bytes);
       statsResult.size = index;
-      performance.size[index]++;
+      performance.size[index] += 1;
 
       index = sortedIndex(options.busy, connecting);
       statsResult.busy = index;
-      performance.busy[index]++;
+      performance.busy[index] += 1;
 
       onStats(performance, statsResult, ctx);
       if (err) {
