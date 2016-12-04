@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/vicanso/koa-http-stats"
   },
-  "version": "2.1.8",
+  "version": "2.1.9",
   "author": "Tree Xie <vicansocanbico@gmail.com>",
   "bugs": {
     "url": "https://github.com/vicanso/koa-http-stats/issues",
@@ -26,17 +26,17 @@
   "license": "MIT",
   "readmeFilename": "Readme.md",
   "dependencies": {
-    "debug": "^2.2.0"
+    "debug": "^2.3.3"
   },
   "devDependencies": {
-   "eslint": "^3.6.1",
+   "eslint": "^3.11.1",
     "eslint-config-airbnb": "^12.0.0",
     "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-jsx-a11y": "^2.2.2",
-    "eslint-plugin-react": "^6.3.0",
+    "eslint-plugin-react": "^6.7.1",
     "istanbul": "^0.4.5",
     "koa": "^2.0.0",
     "mocha": "^2.5.3",
-    "supertest": "^2.0.0"
+    "supertest": "^2.0.1"
   }
 }
