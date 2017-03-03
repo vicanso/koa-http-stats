@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/vicanso/koa-http-stats"
   },
-  "version": "2.1.9",
+  "version": "2.2.0",
   "author": "Tree Xie <vicansocanbico@gmail.com>",
   "bugs": {
     "url": "https://github.com/vicanso/koa-http-stats/issues",
