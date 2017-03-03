@@ -1,9 +1,13 @@
 'use strict';
 
-const util = require('util');
-/* istanbul ignore next */
 function noop() {}
 
+function isFunction(fn) {
+  return typeof fn === 'function';
+}
+function isObject(x) {
+  return x != null && typeof x === 'object';
+}
 
 function fill(total, v) {
   const arr = [];
@@ -57,8 +61,8 @@ function get(arr, filter, defaultValue) {
 
 function stats() {
   const args = Array.from(arguments);
-  const onStats = get(args, util.isFunction, noop);
-  const options = get(args, util.isObject, {});
+  const onStats = get(args, isFunction, noop);
+  const options = get(args, isObject, {});
   extendOptions(options);
   const performance = {
     total: 0,

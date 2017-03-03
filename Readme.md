@@ -5,7 +5,7 @@
 [![npm](http://img.shields.io/npm/v/koa-http-stats.svg?style=flat-square)](https://www.npmjs.org/package/koa-http-stats)
 [![Github Releases](https://img.shields.io/npm/dm/koa-http-stats.svg?style=flat-square)](https://github.com/vicanso/koa-http-stats)
 
-HTTP Stats middleware for Koa. This is an useful simple stats, include: request total, request connecting total, request handle time and so on.
+HTTP Stats middleware for Koa2. This is an useful simple stats, include: request total, request connecting total, request handle time and so on.
 
 ## Installation
 
@@ -58,7 +58,7 @@ app.use(ctx => {
 
 #### onStats
 
-When a request is done, the function will be trigger. 
+When a request is done, the function will be trigger.
 
 - `performance` application performance
 
