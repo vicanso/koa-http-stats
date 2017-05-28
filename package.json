@@ -27,7 +27,7 @@
   "license": "MIT",
   "readmeFilename": "Readme.md",
   "dependencies": {
-    "debug": "^2.6.1"
+    "debug": "^2.6.8"
   },
   "devDependencies": {
     "eslint": "^3.12.2",
@@ -36,7 +36,7 @@
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.8.0",
     "istanbul": "^0.4.5",
-    "koa": "^2.0.1",
+    "koa": "2.0.1",
     "mocha": "^3.1.0",
     "supertest": "^2.0.1"
   }
