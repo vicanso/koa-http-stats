@@ -61,7 +61,9 @@ describe('http-stats', done => {
 		app.use(ctx => {
 			return new Promise((resolve, reject) => {
 				setTimeout(() => {
-					reject(new Error('ERROR'));
+					const err = new Error('ERROR');
+					err.status = 'ECONNABORTED';
+					reject(err);
 				}, 1000);
 			});
 		});

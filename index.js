@@ -87,7 +87,10 @@ function stats() {
       let statusCode = ctx.status;
       /* istanbul ignore else */
       if (err) {
-        statusCode = err.status || err.code || 500;
+        statusCode = parseInt(err.status || err.statusCode, 10);
+        if (Number.isNaN(statusCode)) {
+          statusCode = 500;
+        }
       }
 
       const bytes = ctx.length || 0;
